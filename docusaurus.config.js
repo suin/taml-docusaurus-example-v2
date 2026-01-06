@@ -49,6 +49,26 @@ const config = {
     ['@taml/docusaurus', { docusaurusVersion: "v2" }], // Add this line
   ],
 
+  // Workaround for Webpack "fully specified" ESM resolution failures on some build environments
+  // (e.g. when ESM dependencies import `react/jsx-runtime` without the `.js` extension).
+  plugins: [
+    function webpackResolveReactJsxRuntime() {
+      return {
+        name: 'webpack-resolve-react-jsx-runtime',
+        configureWebpack() {
+          return {
+            resolve: {
+              alias: {
+                'react/jsx-runtime': require.resolve('react/jsx-runtime'),
+                'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime'),
+              },
+            },
+          };
+        },
+      };
+    },
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
